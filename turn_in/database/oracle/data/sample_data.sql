@@ -8,12 +8,12 @@ DELETE FROM Loans;
 DELETE FROM Books;
 DELETE FROM Students;
 
-INSERT INTO Students (student_id, name, email, phone, registration_date) VALUES
-    (1001, 'John Smith', 'john.smith@email.com', '+44 7700 900001', SYSDATE - 120);
-INSERT INTO Students (student_id, name, email, phone, registration_date) VALUES
-    (1002, 'Jane Doe', 'jane.doe@email.com', '+44 7700 900002', SYSDATE - 95);
-INSERT INTO Students (student_id, name, email, phone, registration_date) VALUES
-    (1003, 'Bob Johnson', 'bob.johnson@email.com', '+44 7700 900003', SYSDATE - 62);
+INSERT INTO Students (student_id, name, email, phone, address, registration_date) VALUES
+    (1001, 'John Smith', 'john.smith@email.com', '+44 7700 900001', '10 Library Lane', SYSDATE - 120);
+INSERT INTO Students (student_id, name, email, phone, address, registration_date) VALUES
+    (1002, 'Jane Doe', 'jane.doe@email.com', '+44 7700 900002', '22 Archive Avenue', SYSDATE - 95);
+INSERT INTO Students (student_id, name, email, phone, address, registration_date) VALUES
+    (1003, 'Bob Johnson', 'bob.johnson@email.com', '+44 7700 900003', '33 Research Road', SYSDATE - 62);
 
 INSERT INTO Books (book_id, title, author, isbn, category, publication_year, available_copies, total_copies) VALUES
     (2001, 'Database Systems', 'Silberschatz, Korth, Sudarshan', '9780078022159', 'Databases', 2020, 2, 5);

@@ -19,6 +19,7 @@ CREATE TABLE Students (
     name VARCHAR2(100) NOT NULL,
     email VARCHAR2(100) UNIQUE NOT NULL,
     phone VARCHAR2(20),
+    address VARCHAR2(200),
     registration_date DATE DEFAULT SYSDATE
 );
 
