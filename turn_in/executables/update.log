@@ -1,0 +1,18 @@
+[2025-10-13 10:50:34] Starting update in C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables
+[2025-10-13 10:50:35] Current JAR: C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\library-database-system-1.0.0.jar (version: 1.0.0)
+[2025-10-13 10:50:35] Creating backup at C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\backup\20251013_105035
+[2025-10-13 10:50:35] Searching local artifacts in C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\source_code\target
+[2025-10-13 10:50:35] New JAR: C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\source_code\target\library-database-system-1.0.0.jar (version: 1.0.0) from local build artifacts
+[2025-10-13 10:50:35] Warning: New version (1.0.0) is not newer than current (1.0.0). Proceeding anyway.
+[2025-10-13 10:50:35] Applying update: JAR -> C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\library-database-system-1.0.0.jar
+[2025-10-13 10:50:35] Post-update version: 1.0.0
+[2025-10-13 10:50:35] Update completed successfully.
+[2025-10-17 17:08:15] Starting update in C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables
+[2025-10-17 17:08:15] Current JAR: C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\library-database-system-1.0.0.jar (version: 1.0.0)
+[2025-10-17 17:08:15] Creating backup at C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\backup\20251017_170815
+[2025-10-17 17:08:23] Searching local artifacts in C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\source_code\target
+[2025-10-17 17:08:23] New JAR: C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\source_code\target\library-database-system-1.0.0.jar (version: 1.0.0) from local build artifacts
+[2025-10-17 17:08:23] Warning: New version (1.0.0) is not newer than current (1.0.0). Proceeding anyway.
+[2025-10-17 17:08:23] Applying update: JAR -> C:\Users\cgatt\OneDrive\Pictures\Desktop\CT6049 - Java DB\turn_in\executables\library-database-system-1.0.0.jar
+[2025-10-17 17:08:23] Post-update version: 1.0.0
+[2025-10-17 17:08:23] Update completed successfully.

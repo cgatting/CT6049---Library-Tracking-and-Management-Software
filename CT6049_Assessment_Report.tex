@@ -3,6 +3,7 @@
 % Essential packages
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[english]{babel}
 \usepackage{geometry}
 \usepackage{fancyhdr}
@@ -15,7 +16,8 @@
 \usepackage{amssymb}
 \usepackage{url}
 \usepackage{hyperref}
-\usepackage{cite}
+% Typographic and citation packages
+\usepackage{microtype}
 \usepackage{setspace}
 \usepackage{enumitem}
 \usepackage{array}
@@ -28,6 +30,12 @@
 \usepackage{verbatim}
 \usepackage{tikz}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Improve justification and paragraph readability
+\emergencystretch=3em
+\setlength{\parskip}{0.6em}
+\setlength{\parindent}{0pt}
 
 % Page geometry
 \geometry{
@@ -101,8 +109,11 @@
 % Section formatting
 \titleformat{\section}
 {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{*3}{*1.2}
 \titleformat{\subsection}
 {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{*2}{*1.0}
+% Subsubsections are not used; keep formatting unused
 \titleformat{\subsubsection}
 {\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
 
@@ -188,26 +199,11 @@ The application serves as a complete library management solution, supporting ess
 
 \subsection{System Requirements}
 
-The functional requirements encompass four core operational areas:
-
-\begin{itemize}
-    \item \textbf{Student Management}: Complete student lifecycle including registration, profile updates, and account status tracking
-    \item \textbf{Book Management}: Comprehensive catalog management with inventory tracking, availability monitoring, and metadata maintenance
-    \item \textbf{Loan Processing}: Full transaction support for book borrowing, returns, renewals, and overdue management
-    \item \textbf{Fine Management}: Automatic calculation, payment processing, and history tracking
-    \item \textbf{Reporting}: Monthly loan history and fine payment summaries per student
-\end{itemize}
+The functional requirements span the complete library workflow. Student management covers registration, profile updates, and account status tracking. Book management maintains the catalog and metadata while tracking inventory and availability. Loan processing supports borrowing, returns, renewals, and overdue management. Fine management calculates charges automatically, records payments, and preserves history. Reporting provides monthly loan histories and fine payment summaries per student.
 
 \subsection{Technical Objectives}
 
-The implementation pursues four primary technical objectives:
-
-\begin{enumerate}
-    \item \textbf{Dual Database Support}: Implement identical functionality using both relational (Oracle) and document-based (MongoDB) paradigms
-    \item \textbf{Architectural Consistency}: Maintain a clean three-tier architecture with clear separation of concerns
-    \item \textbf{Runtime Flexibility}: Enable users to select database backend at application startup
-    \item \textbf{Data Integrity}: Ensure consistent business logic and validation across both implementations
-\end{enumerate}
+The implementation pursues four primary objectives: dual database support that delivers identical functionality in Oracle and MongoDB; architectural consistency via a clean three-tier separation of concerns; runtime flexibility so the user can choose the backend at startup; and uniform data integrity with the same validation and business rules enforced across both implementations.
 
 \section{System Architecture Overview}
 
@@ -233,15 +229,7 @@ The library management system follows a classic three-tier architecture pattern,
 
 \subsection{Design Patterns Employed}
 
-The architecture incorporates several established design patterns to achieve flexibility and maintainability:
-
-\begin{itemize}
-    \item \textbf{Repository Pattern}: Abstracts data access logic, enabling seamless database switching
-    \item \textbf{Factory Pattern}: Manages repository instantiation based on runtime configuration
-    \item \textbf{Model-View-Controller (MVC)}: Separates presentation logic from business logic
-    \item \textbf{Observer Pattern}: Enables loose coupling between GUI components and data updates
-    \item \textbf{Singleton Pattern}: Manages database connections and configuration settings
-\end{itemize}
+To achieve flexibility and maintainability, the architecture applies established patterns: a Repository abstracts data access and enables seamless backend switching; a Factory manages repository instantiation based on runtime configuration; the MVC separation keeps presentation concerns distinct from business logic; an Observer-style update flow loosens coupling between GUI components and data changes; and a Singleton centralizes connection management and configuration.
 
 \subsection{Scope and Assumptions}
 
@@ -249,25 +237,11 @@ This project targets a Windows desktop environment with JDK 11+, Oracle XE 21c, 
 
 \subsection{Requirements Traceability}
 
-Functional requirements map directly to UI and data operations:
-\begin{itemize}
-    \item \textbf{Student Management}: Create/update profiles with unique emails; track registration dates.
-    \item \textbf{Book Management}: Maintain catalog and availability; block borrowing at zero stock.
-    \item \textbf{Loan Processing}: Borrow/return/renew; mark overdue; enforce coherent dates.
-    \item \textbf{Fine Management}: Accrue fines on overdue returns; record and settle payments.
-    \item \textbf{Reporting}: Monthly loan and fine summaries per student.
-\end{itemize}
-
-Non-functional goals: usable tabbed GUI, maintainable repository abstraction, portable Java packaging, and externalized credentials.
+Functional requirements map directly to UI and data operations. Student management includes creating and updating profiles with unique emails and tracked registration dates. Book management maintains the catalog and availability, blocking borrowing when stock reaches zero. Loan processing handles borrowing, returns, and renewals, marks items overdue, and enforces coherent dates. Fine management accrues charges on overdue returns and supports recording and settling payments. Reporting produces monthly summaries of loans and fines per student. Non-functional goals emphasize a usable tabbed GUI, a maintainable repository abstraction, portable Java packaging, and externalized credentials.
 
 \subsection{Primary User Journeys}
 
-The key user journeys validate both backends in the same way:
-\begin{itemize}
-    \item \textbf{Borrow}: Select student and available book; commit loan; availability decrements.
-    \item \textbf{Return}: Mark active loan returned; availability increments; overdue returns accrue fines.
-    \item \textbf{Report/Pay}: Generate monthly reports and settle outstanding fines.
-\end{itemize}
+The key journeys validate both backends in the same way. For borrowing, a user selects a student and an available book, commits the loan, and availability decreases. For returns, an active loan is marked returned, availability increases, and overdue items accrue fines. For reporting and payments, the user generates monthly summaries and settles any outstanding fines.
 
 \subsection{Validation and Business Rules}
 
@@ -301,7 +275,7 @@ The evaluation focuses on functional parity, integrity guarantees, and developer
 
 \subsection{Data Model Comparison}
 
-\subsubsection{Oracle Relational Model}
+% Removed subsubsection to keep narrative flow
 The Oracle implementation follows traditional relational database principles with normalized tables and strict referential integrity:
 \begin{comment}
 \begin{lstlisting}[language=SQL, caption=Oracle Database Schema]
@@ -351,7 +325,7 @@ In MongoDB, selective denormalization embeds frequently read details to avoid lo
 
 Relational design remains normalized with foreign keys and unique constraints; joins assemble composite views. Indexes on keys and dates keep core workflows efficient while preserving strong integrity guarantees.
 
-\subsubsection{MongoDB Document Model}
+% Removed subsubsection to keep narrative flow
 The MongoDB implementation uses flexible document structures with embedded data and denormalized references:
 \begin{comment}
 \begin{lstlisting}[language=Java, caption=MongoDB Document Structures]
@@ -393,7 +367,7 @@ The MongoDB implementation uses flexible document structures with embedded data 
 
 \subsection{Implementation Approach Analysis}
 
-\subsubsection{Oracle JDBC Implementation}
+% Removed subsubsection; present as narrative
 The Oracle implementation demonstrates traditional relational mapping with explicit SQL and result set processing:
 \begin{comment}
 \begin{lstlisting}[language=Java, caption=Oracle JDBC Implementation]
@@ -440,7 +414,7 @@ public class StudentDAO {
 \end{lstlisting}
 \end{comment}
 
-\subsubsection{MongoDB Java Driver Implementation}
+% Removed subsubsection; present as narrative
 The MongoDB implementation shows natural object-to-document mapping with fluent API operations:
 \begin{comment}
 \begin{lstlisting}[language=Java, caption=MongoDB Java Driver Implementation]
@@ -493,7 +467,7 @@ public class MongoLibraryRepository implements LibraryRepository {
 
 \subsection{Query Pattern Comparison}
 
-\subsubsection{Complex Queries in Oracle}
+% Removed subsubsection; present as narrative
 Oracle excels at complex relational queries with joins and aggregations:
 \begin{comment}
 \begin{lstlisting}[language=Java, caption=Oracle Complex Query Implementation]
@@ -516,7 +490,7 @@ public List<OverdueLoanReport> getOverdueLoansWithDetails() throws SQLException 
 
 In the relational backend, the reporting and monitoring queries lean on joins across \textit{Loans}, \textit{Students}, and \textit{Books}. Overdue detection is a date comparison (\texttt{due\_date < SYSDATE}) combined with a status filter, and extended reports add projections for student and book attributes. Proper indexing on \texttt{student\_id}, \texttt{loan\_date}, and \texttt{status} ensures selectivity and stable performance as data grows. Aggregation for monthly histories can be handled with standard SQL functions (for example, \texttt{EXTRACT(MONTH...)}), keeping the queries readable and maintainable.
 
-\subsubsection{Document Queries in MongoDB}
+% Removed subsubsection; present as narrative
 MongoDB uses its aggregation pipeline for complex operations:
 \begin{comment}
 \begin{lstlisting}[language=Java, caption=MongoDB Aggregation Pipeline]
@@ -547,7 +521,7 @@ In the document backend, straightforward \texttt{find} queries with range filter
 
 \subsection{Transaction Handling Comparison}
 
-\subsubsection{Oracle ACID Transactions}
+% Removed subsubsection; present as narrative
 Oracle provides full ACID compliance with explicit transaction control:
 
 \begin{comment}
@@ -578,7 +552,7 @@ public boolean returnBook(int loanId) throws SQLException {
 
 For cross-table updates (for example, a return that toggles loan status and adjusts inventory), Oracle’s ACID transactions ensure atomicity and rollback on failure. The controller encapsulates these sequences so that business logic remains straightforward and side effects are contained. This reduces the chance of partial updates causing inconsistent UI states or reports.
 
-\subsubsection{MongoDB Document-Level Atomicity}
+% Removed subsubsection; present as narrative
 MongoDB provides atomicity at the document level, with multi-document transactions available:
 
 \begin{comment}
@@ -619,44 +593,9 @@ In MongoDB, operations that affect a single document (such as changing a loan’
 
 \subsection{Advantages and Disadvantages Analysis}
 
-\subsubsection{Oracle Relational Advantages}
-\begin{itemize}
-    \item \textbf{ACID Compliance}: Full transactional integrity with rollback capabilities ensures data consistency
-    \item \textbf{Referential Integrity}: Foreign key constraints automatically prevent orphaned records and maintain data quality
-    \item \textbf{Query Optimization}: Mature cost-based optimizer with execution plans and statistics for complex queries
-    \item \textbf{SQL Standardization}: Widely understood query language with extensive tooling and developer expertise
-    \item \textbf{Complex Joins}: Efficient handling of multi-table relationships with optimized join algorithms
-    \item \textbf{Data Validation}: Column constraints and triggers provide robust data validation at the database level
-\end{itemize}
+For the relational approach, Oracle’s strengths include full ACID transactions with reliable rollback, strong referential integrity through foreign keys, and a mature cost-based optimizer that keeps complex queries predictable. SQL’s standardization and tooling make sophisticated joins and data validation straightforward, with constraints and triggers enforcing rules close to the data. The trade-offs are mostly structural: schema changes require migrations, mapping objects to tables introduces impedance mismatches, and reconstructing rich objects can involve multiple joins. Vertical scaling remains the dominant path, and developers need a solid grasp of SQL and relational design to get the best results.
 
-\subsubsection{Oracle Relational Disadvantages}
-\begin{itemize}
-    \item \textbf{Schema Rigidity}: Structure changes require ALTER TABLE statements, migrations, and potential downtime
-    \item \textbf{Object-Relational Impedance Mismatch}: Significant mapping overhead between Java objects and relational tables
-    \item \textbf{Normalization Overhead}: Multiple joins required for complete object reconstruction impact performance
-    \item \textbf{Vertical Scaling Limitations}: Traditional scaling approach with limited horizontal distribution options
-    \item \textbf{Development Complexity}: Requires detailed understanding of SQL, joins, and relational design principles
-\end{itemize}
-
-\subsubsection{MongoDB NoSQL Advantages}
-\begin{itemize}
-    \item \textbf{Schema Flexibility}: Documents can evolve without migrations, supporting agile development practices
-    \item \textbf{Natural Object Mapping}: JSON documents align closely with Java object structures, reducing impedance mismatch
-    \item \textbf{Horizontal Scaling}: Built-in sharding and replica sets support distributed architectures
-    \item \textbf{Rapid Prototyping}: Flexible schema enables faster development cycles and iterative design
-    \item \textbf{Rich Query Language}: Powerful aggregation framework with pipeline operations for complex data processing
-    \item \textbf{Performance}: Single document operations are typically faster than multi-table joins
-\end{itemize}
-
-\subsubsection{MongoDB NoSQL Disadvantages}
-\begin{itemize}
-    \item \textbf{Eventual Consistency}: Default consistency model may allow stale reads in distributed scenarios
-    \item \textbf{No Referential Integrity}: Application code must enforce data relationships and prevent orphaned records
-    \item \textbf{Data Duplication}: Denormalization strategies can lead to storage overhead and update anomalies
-    \item \textbf{Learning Curve}: Different query paradigm and aggregation concepts require developer retraining
-    \item \textbf{Limited ACID}: Multi-document transactions have performance implications and complexity
-    \item \textbf{Query Complexity}: Complex relational queries may require multiple operations or complex aggregation pipelines
-\end{itemize}
+For the document approach, MongoDB excels at schema flexibility and natural object mapping, allowing the data model to evolve without disruptive migrations. Built-in support for replica sets and sharding enables horizontal scale, while single-document operations are fast and the aggregation pipeline covers advanced reporting needs. The corresponding trade-offs are operational and consistency related: relationships are enforced in application code rather than through foreign keys, denormalization can duplicate data and must be kept consistent, and multi-document transactions exist but add complexity and overhead. Developers coming from relational backgrounds may also face a learning curve when adopting the aggregation and query model.
 
 \section{Three-Tier Architecture Analysis}
 
@@ -680,13 +619,7 @@ This section links the analysis to concrete repository artifacts that evidence t
 
 \subsection{Project Structure and Key Files}
 
-Key items supporting the dual-backend design:
-\begin{itemize}
-    \item Build config: \file{pom.xml} (dependencies, packaging, executables)
-    \item Database scripts: \file{create\_oracle\_user.sql}, \file{oracle\_schema\_sync.sql}
-    \item Documentation: \file{docs/database-design.md}, \file{docs/setup.md}
-    \item Prototype UI: \file{turn\_in/source\_code/SimpleLibraryDemo.java}
-\end{itemize}
+Key evidence of the dual-backend design appears in the Maven build file (\file{pom.xml}) for dependencies and packaging, the database scripts (\file{create\_oracle\_user.sql} and \file{oracle\_schema\_sync.sql}), the supporting documentation (\file{docs/database-design.md} and \file{docs/setup.md}), and the prototype UI in \file{turn\_in/source\_code/SimpleLibraryDemo.java}.
 
 \subsection{Build, Dependencies, and Packaging (pom.xml)}
 
@@ -878,12 +811,7 @@ This underscores following the user-creation/schema scripts and validating liste
 
 \subsection{Repository Guidelines and Conventions}
 
-The guidelines (\file{AGENTS.md}) emphasize project structure and practices:
-\begin{itemize}
-    \item Java sources under \code{com.library.*}; clear naming and 4-space indent
-    \item Build helpers for compile/run/connectivity; tests under \code{src/test/java}
-    \item Security hygiene: avoid committing credentials; use env/config files
-\end{itemize}
+The guidelines in \file{AGENTS.md} emphasize clear Java package structure under \code{com.library.*} with consistent naming and four-space indentation, practical build helpers for compilation, execution and connectivity checks (with tests under \code{src/test/java}), and security hygiene that avoids committing credentials by relying on environment variables and configuration files.
 
 \subsection{Packaging and Deployment}
 
@@ -905,29 +833,14 @@ The tabbed Swing UI groups circulation, finance, and reporting. Clear typography
 \section{Performance and Scalability Considerations}
 
 \subsection{Oracle Performance Characteristics}
-\begin{itemize}
-    \item \textbf{Query Optimization}: Mature cost-based optimizer with extensive statistics
-    \item \textbf{Indexing Strategy}: B-tree indexes on primary keys and foreign keys
-    \item \textbf{Connection Pooling}: JDBC connection pooling for resource management
-    \item \textbf{Transaction Management}: ACID compliance with rollback capabilities
-\end{itemize}
+Oracle performance benefits from a mature cost-based optimizer informed by extensive statistics, well-understood B-tree indexing on primary and foreign keys, stable JDBC connection pooling for resource management, and transaction handling that delivers predictable ACID behavior during peak workloads.
 
 \subsection{MongoDB Performance Characteristics}
-\begin{itemize}
-    \item \textbf{Document Retrieval}: Single-document operations are highly optimized
-    \item \textbf{Indexing}: Compound indexes on frequently queried fields
-    \item \textbf{Aggregation Pipeline}: Efficient data processing for reporting queries
-    \item \textbf{Memory Management}: Automatic memory-mapped file handling
-\end{itemize}
+MongoDB emphasizes fast single-document reads and writes, uses compound indexes on frequently queried fields, and leverages the aggregation pipeline for efficient reporting workloads. Under the hood it relies on memory-mapped file handling and caching strategies that keep hot working sets responsive.
 
 \subsection{Scalability Analysis}
 
-The architecture supports different scaling strategies:
-\begin{itemize}
-    \item \textbf{Oracle}: Vertical scaling with potential for read replicas
-    \item \textbf{MongoDB}: Horizontal scaling through sharding and replica sets
-    \item \textbf{Application Tier}: Stateless design enables horizontal scaling
-\end{itemize}
+The architecture supports different scaling strategies across layers: Oracle typically favors vertical scaling with selective read replication, MongoDB scales horizontally through sharding and replica sets, and the stateless application tier can be multiplied to meet demand.
 
 \subsection{Reliability and Monitoring}
 
@@ -953,31 +866,15 @@ This project successfully demonstrates the implementation of a dual-backend libr
 
 \subsection{Technology Trade-offs}
 
-The comparative analysis reveals that both approaches have distinct advantages:
-\begin{itemize}
-    \item \textbf{Oracle excels} in data consistency, mature tooling, and complex querying
-    \item \textbf{MongoDB excels} in schema flexibility, development speed, and horizontal scalability
-\end{itemize}
+The comparative analysis shows distinct strengths: Oracle excels in data consistency, mature tooling, and complex querying, while MongoDB excels in schema flexibility, development speed, and horizontal scalability.
 
 \subsection{Architectural Success}
 
-The repository pattern and three-tier architecture successfully achieve the project's primary objectives:
-\begin{itemize}
-    \item Runtime database selection without code changes
-    \item Consistent business logic across implementations
-    \item Clear separation of concerns
-    \item Maintainable and testable codebase
-\end{itemize}
+The repository pattern and three-tier architecture achieve the project objectives: runtime database selection without code changes, consistent business logic across implementations, clear separation of concerns, and a maintainable, testable codebase.
 
 \subsection{Future Enhancements}
 
-Potential improvements could include:
-\begin{itemize}
-    \item Caching layer implementation for improved performance
-    \item Microservices architecture for better scalability
-    \item Event-driven architecture for real-time updates
-    \item Advanced reporting with data analytics capabilities
-\end{itemize}
+Potential improvements include introducing a caching layer for performance, evolving toward a microservices architecture for scale, adopting event-driven designs for real-time updates, and adding advanced analytics for richer reporting.
 
 \appendix
 \section{Appendix A: Implementation Examples}
@@ -1327,55 +1224,6 @@ ERROR:
 ORA-01005: null password given; logon denied
 \end{lstlisting}
 
-\section{References}
-
-\begin{thebibliography}{15}
-
-\bibitem{silberschatz2019}
-Silberschatz, A., Galvin, P. B., \& Gagne, G. (2019). \textit{Database System Concepts} (7th ed.). McGraw-Hill Education.
-
-\bibitem{chodorow2010}
-Chodorow, K., \& Dirolf, M. (2010). \textit{MongoDB: The Definitive Guide}. O'Reilly Media.
-
-\bibitem{fowler2002}
-Fowler, M. (2002). \textit{Patterns of Enterprise Application Architecture}. Addison-Wesley Professional.
-
-\bibitem{oracle2023}
-Oracle Corporation. (2023). \textit{Oracle Database 21c Documentation}. Retrieved from https://docs.oracle.com/en/database/oracle/oracle-database/21/
-
-\bibitem{mongodb2023}
-MongoDB Inc. (2023). \textit{MongoDB Manual}. Retrieved from https://docs.mongodb.com/manual/
-
-\bibitem{gamma1994}
-Gamma, E., Helm, R., Johnson, R., \& Vlissides, J. (1994). \textit{Design Patterns: Elements of Reusable Object-Oriented Software}. Addison-Wesley Professional.
-
-\bibitem{martin2017}
-Martin, R. C. (2017). \textit{Clean Architecture: A Craftsman's Guide to Software Structure and Design}. Prentice Hall.
-
-\bibitem{hohpe2003}
-Hohpe, G., \& Woolf, B. (2003). \textit{Enterprise Integration Patterns: Designing, Building, and Deploying Messaging Solutions}. Addison-Wesley Professional.
-
-\bibitem{evans2003}
-Evans, E. (2003). \textit{Domain-Driven Design: Tackling Complexity in the Heart of Software}. Addison-Wesley Professional.
-
-\bibitem{richardson2018}
-Richardson, C. (2018). \textit{Microservices Patterns: With Examples in Java}. Manning Publications.
-
-\bibitem{kleppmann2017}
-Kleppmann, M. (2017). \textit{Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems}. O'Reilly Media.
-
-\bibitem{redmond2012}
-Redmond, E., \& Wilson, J. R. (2012). \textit{Seven Databases in Seven Weeks: A Guide to Modern Databases and the NoSQL Movement}. Pragmatic Bookshelf.
-
-\bibitem{sadalage2012}
-Sadalage, P. J., \& Fowler, M. (2012). \textit{NoSQL Distilled: A Brief Guide to the Emerging World of Polyglot Persistence}. Addison-Wesley Professional.
-
-\bibitem{oracle2023jdbc}
-Oracle Corporation. (2023). \textit{JDBC Developer's Guide and Reference}. Retrieved from https://docs.oracle.com/en/database/oracle/oracle-database/21/jjdbc/
-
-\bibitem{mongodb2023java}
-MongoDB Inc. (2023). \textit{MongoDB Java Driver Documentation}. Retrieved from https://mongodb.github.io/mongo-java-driver/
-
-\end{thebibliography}
+% References intentionally removed per instructions
 
 \end{document}

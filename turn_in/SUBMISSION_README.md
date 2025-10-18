@@ -35,6 +35,27 @@ turn_in/
 
 Note: `executables\run-app.bat` is a self-contained launcher that runs the bundled JAR using `dependencies\*` — no Maven required.
 
+## How To Update
+
+- Double-click `executables\update-app.bat` or run:
+  - `powershell -ExecutionPolicy Bypass -File executables\update-app.ps1`
+- The updater performs a clean update while preserving user configurations and data in the `executables` folder by creating a timestamped backup under `executables\backup`.
+- Version verification uses the JAR filename (e.g., `library-database-system-1.0.0.jar`) before and after the update and will automatically rollback if verification fails.
+
+Options:
+
+- `-SourceUrl <zip-url>`: Download a ZIP containing updated artifacts (JAR/EXEs) and apply it.
+- No parameters: The updater looks for local build artifacts under `source_code\target` and applies them.
+- `-DryRun`: Logs actions without making changes.
+- `-Rollback`: Restores the most recent backup created by the updater.
+
+Examples:
+
+- `update-app.bat` — apply latest local build from `source_code\target`.
+- `update-app.bat -SourceUrl https://example.com/library_build.zip` — download and apply remote build.
+- `update-app.bat -DryRun` — simulate update and log actions.
+- `update-app.bat -Rollback` — revert to the last backup.
+
 ## Database Setup & Verification
 
 - Oracle XE user and schema:

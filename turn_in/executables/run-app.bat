@@ -23,7 +23,7 @@ REM Validate Java availability
 where java >nul 2>&1
 if errorlevel 1 (
     echo [error] Java Runtime not found. Please install JRE/JDK 8 or newer.
-    goto :end
+    goto :fallback
 )
 
 REM Build classpath: submission executables JAR + all dependencies
@@ -32,11 +32,11 @@ set "DEPS_PATH=dependencies\*"
 if not exist "%JAR_PATH%" (
     echo [error] Missing JAR: %CD%\%JAR_PATH%
     echo [hint] Ensure you are running from the 'turn_in' package.
-    goto :end
+    goto :fallback
 )
 if not exist "dependencies" (
     echo [error] Missing 'dependencies' folder next to executables.
-    goto :end
+    goto :fallback
 )
 
 echo [info] Starting application with backend: %BACKEND%
@@ -44,8 +44,35 @@ set "JAVA_PROPS="
 if /I "%BACKEND%"=="oracle" set "JAVA_PROPS=-Dlibrary.backend=oracle"
 if /I "%BACKEND%"=="mongo" set "JAVA_PROPS=-Dlibrary.backend=mongo"
 
-echo [debug] Java command: java %JAVA_PROPS% -cp "%JAR_PATH%;%DEPS_PATH%" com.library.LibraryApp %APP_ARGS%
-java %JAVA_PROPS% -cp "%JAR_PATH%;%DEPS_PATH%" com.library.LibraryApp %APP_ARGS%
+set "JAVA_CMD=java %JAVA_PROPS% -cp \"%JAR_PATH%;%DEPS_PATH%\" com.library.LibraryApp %APP_ARGS%"
+echo [debug] Java command: %JAVA_CMD%
+%JAVA_CMD%
+if errorlevel 1 (
+    echo [warn] Java class launch failed; attempting EXE fallback...
+    goto :fallback
+)
+
+goto :end
+
+:fallback
+REM Try Launch4j executables if available
+if /I "%BACKEND%"=="oracle" (
+    if exist "executables\library_oracle.exe" (
+        echo [info] Launching fallback: executables\library_oracle.exe
+        start "Library Oracle" /B "executables\library_oracle.exe"
+        goto :end
+    )
+)
+if /I "%BACKEND%"=="mongo" (
+    if exist "executables\library_mongo.exe" (
+        echo [info] Launching fallback: executables\library_mongo.exe
+        start "Library Mongo" /B "executables\library_mongo.exe"
+        goto :end
+    )
+)
+
+echo [error] Unable to start application. Neither Java class nor EXE fallback succeeded.
+echo [hint] Ensure JAR contains com.library.LibraryApp or use the EXE launchers directly.
 
 :end
 popd >nul
