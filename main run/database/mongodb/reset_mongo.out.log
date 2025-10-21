@@ -1,0 +1,21 @@
+[mongo-reset] Connecting to 'library_db'...
+[mongo-reset] Connection OK.
+[mongo-reset] Step 1: Dropping existing collections...
+[mongo-reset] Dropped collection 'loans'.
+[mongo-reset] Dropped collection 'students'.
+[mongo-reset] Dropped collection 'counters'.
+[mongo-reset] Dropped collection 'fines'.
+[mongo-reset] Dropped collection 'books'.
+[mongo-reset] All existing collections dropped.
+[mongo-reset] Step 2: Creating collections and indexes...
+[mongo-reset] Collections and indexes created.
+[mongo-reset] Step 3: Inserting demo data...
+[mongo-reset] Inserted students: undefined
+[mongo-reset] Inserted books: undefined
+[mongo-reset] Inserted loans: undefined
+[mongo-reset] Inserted fines: undefined
+[mongo-reset] Step 4: Validating relationships...
+DeprecationWarning: Collection.count() is deprecated. Use countDocuments or estimatedDocumentCount.
+[mongo-reset] Relationships validated successfully.
+[mongo-reset] Final counts — students: 3, books: 3, loans: 3, fines: 2
+[mongo-reset] MongoDB reset completed successfully.
