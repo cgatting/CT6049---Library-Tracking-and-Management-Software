@@ -26,7 +26,8 @@ public class OracleConnectionManager {
     public Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             try {
-                Class.forName("oracle.jdbc.driver.OracleDriver");
+                Class.forName("oracle.jdbc.OracleDriver");
+                DriverManager.setLoginTimeout(10);
                 connection = DriverManager.getConnection(
                     DatabaseConfig.ORACLE_URL,
                     DatabaseConfig.ORACLE_USERNAME,
@@ -56,7 +57,8 @@ public class OracleConnectionManager {
             Connection conn = getConnection();
             return conn != null && !conn.isClosed();
         } catch (SQLException e) {
-            System.err.println("Oracle connection test failed: " + e.getMessage());
+            System.err.printf("Oracle connection test failed (SQLState: %s, ErrorCode: %d): %s%n",
+                e.getSQLState(), e.getErrorCode(), e.getMessage());
             return false;
         }
     }

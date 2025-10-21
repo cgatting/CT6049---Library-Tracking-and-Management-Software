@@ -6,9 +6,9 @@ package com.library.config;
 public class DatabaseConfig {
     
     // Oracle Database Configuration
-    public static final String ORACLE_URL = "jdbc:oracle:thin:@localhost:1521:xe";
-    public static final String ORACLE_USERNAME = "library_user";
-    public static final String ORACLE_PASSWORD = "cgatting1";
+    public static final String ORACLE_URL = System.getProperty("library.oracle.url", "jdbc:oracle:thin:@localhost:1521:xe");
+    public static final String ORACLE_USERNAME = System.getProperty("library.oracle.username", "c##library_user");
+    public static final String ORACLE_PASSWORD = System.getProperty("library.oracle.password", "cgatting1");
     
     // MongoDB Configuration
     public static final String MONGODB_CONNECTION_STRING = "mongodb://localhost:27017";
