@@ -101,3 +101,4 @@ Dependencies:
 - All database changes should live under `database/` and be organized by platform (`oracle/`, `mongodb/`).
 - Prefer managing libraries via Maven; keep `dependencies/` in sync with `pom.xml` if you ship standalone bundles.
 - If you add a new module or folder, include a brief section here with purpose, contents, and dependencies.
+ - Supported databases are `Oracle` (relational) and `MongoDB` (document). No Microsoft SQL Server or MySQL components are present or supported.

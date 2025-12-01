@@ -1,4 +1,3 @@
-com\library\config\H2DatabaseConfig.class
 com\library\LibraryApp.class
 com\library\controller\LibraryController$ReturnResult.class
 com\library\gui\BorrowReturnPanel$3.class

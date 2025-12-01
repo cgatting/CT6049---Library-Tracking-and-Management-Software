@@ -84,4 +84,32 @@ public interface LibraryRepository {
     List<Fine> getAllFines() throws Exception;
 
     boolean payFine(int fineId) throws Exception;
+
+    // ---- Fines (filtered helpers) ----------------------------------
+    /**
+     * Optional optimized method: return fine history filtered by fine_date month/year.
+     * Default implementation falls back to unfiltered list.
+     */
+    default List<Fine> getFineHistoryByStudentMonthYear(int studentId, Integer month, Integer year) throws Exception {
+        return getAllFineHistory(studentId);
+    }
+
+    /**
+     * Optional optimized method: return PAID fines filtered by payment_date month/year.
+     * Default implementation falls back to unfiltered list and filters in-memory.
+     */
+    default List<Fine> getPaidFinesByStudentInMonth(int studentId, Integer month, Integer year) throws Exception {
+        List<Fine> all = getAllFineHistory(studentId);
+        boolean hasMonth = month != null && month != 0;
+        boolean hasYear = year != null && year != 0;
+        java.util.List<Fine> results = new java.util.ArrayList<>();
+        for (Fine f : all) {
+            if (f == null || f.getPaymentDate() == null || f.getFineAmount() == null) continue;
+            if (!"PAID".equalsIgnoreCase(f.getPaymentStatus())) continue;
+            if (hasMonth && f.getPaymentDate().getMonthValue() != month) continue;
+            if (hasYear && f.getPaymentDate().getYear() != year) continue;
+            results.add(f);
+        }
+        return results;
+    }
 }

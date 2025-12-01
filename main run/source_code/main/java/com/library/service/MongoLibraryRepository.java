@@ -364,6 +364,58 @@ class MongoLibraryRepository implements LibraryRepository {
         return fines.updateOne(Filters.eq("fine_id", fineId), new Document("$set", update)).getModifiedCount() > 0;
     }
 
+    @Override
+    public List<Fine> getFineHistoryByStudentMonthYear(int studentId, Integer month, Integer year) {
+        boolean hasMonth = month != null && month != 0;
+        boolean hasYear = year != null && year != 0;
+        if (!hasMonth || !hasYear) {
+            return getAllFineHistory(studentId);
+        }
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        Bson filter = Filters.and(
+            Filters.eq("student_id", studentId),
+            Filters.gte("fine_date", formatDate(start)),
+            Filters.lte("fine_date", formatDate(end))
+        );
+        List<Fine> results = new ArrayList<>();
+        try (MongoCursor<Document> cursor = fines.find(filter).sort(Sorts.descending("fine_date")).iterator()) {
+            while (cursor.hasNext()) {
+                results.add(mapFine(cursor.next()));
+            }
+        }
+        return results;
+    }
+
+    @Override
+    public List<Fine> getPaidFinesByStudentInMonth(int studentId, Integer month, Integer year) {
+        boolean hasMonth = month != null && month != 0;
+        boolean hasYear = year != null && year != 0;
+        if (!hasMonth || !hasYear) {
+            // Fall back to default interface implementation with checked-exception handling
+            try {
+                return LibraryRepository.super.getPaidFinesByStudentInMonth(studentId, month, year);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to get paid fines by month/year: " + e.getMessage(), e);
+            }
+        }
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+        Bson filter = Filters.and(
+            Filters.eq("student_id", studentId),
+            Filters.eq("payment_status", "PAID"),
+            Filters.gte("payment_date", formatDate(start)),
+            Filters.lte("payment_date", formatDate(end))
+        );
+        List<Fine> results = new ArrayList<>();
+        try (MongoCursor<Document> cursor = fines.find(filter).sort(Sorts.descending("payment_date")).iterator()) {
+            while (cursor.hasNext()) {
+                results.add(mapFine(cursor.next()));
+            }
+        }
+        return results;
+    }
+
     // ---- Helpers ----------------------------------------------------
     private List<Loan> findLoans(Bson filter) {
         List<Loan> results = new ArrayList<>();

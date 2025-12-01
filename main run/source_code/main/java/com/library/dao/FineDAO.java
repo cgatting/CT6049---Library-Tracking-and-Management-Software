@@ -118,6 +118,35 @@ public class FineDAO {
             }
         }
     }
+
+    /**
+     * Get PAID fines by payment month/year for a student
+     */
+    public List<Fine> getPaidFinesByStudentInMonth(int studentId, int month, int year) throws SQLException {
+        String sql = "SELECT f.fine_id, f.student_id, f.loan_id, f.fine_amount, f.fine_date, " +
+                    "f.payment_date, f.payment_status, s.name as student_name, b.title as book_title, " +
+                    "l.due_date, l.return_date " +
+                    "FROM Fines f " +
+                    "JOIN Students s ON f.student_id = s.student_id " +
+                    "JOIN Loans l ON f.loan_id = l.loan_id " +
+                    "JOIN Books b ON l.book_id = b.book_id " +
+                    "WHERE f.student_id = ? AND f.payment_status = 'PAID' " +
+                    "AND EXTRACT(MONTH FROM f.payment_date) = ? " +
+                    "AND EXTRACT(YEAR FROM f.payment_date) = ? " +
+                    "ORDER BY f.payment_date DESC";
+
+        try (Connection conn = connectionManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, studentId);
+            stmt.setInt(2, month);
+            stmt.setInt(3, year);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return mapResultSetToFines(rs);
+            }
+        }
+    }
     
     /**
      * Get all fine history for a student

@@ -26,6 +26,7 @@ public class ReportsPanel extends JPanel {
     private JComboBox<Integer> yearComboBox;
     private JTextArea studentReportArea;
     private JTable statsTable;
+    private JButton monthlyPaidTotalButton;
 
     public ReportsPanel(LibraryController controller) {
         this.controller = controller;
@@ -112,10 +113,13 @@ public class ReportsPanel extends JPanel {
         JButton fineHistoryButton = new JButton("Fine History");
         fineHistoryButton.addActionListener(e -> generateFineHistory());
         JButton exportButton = new JButton("Export to CSV");
+        monthlyPaidTotalButton = new JButton("Monthly Paid Total");
+        monthlyPaidTotalButton.addActionListener(e -> generateMonthlyPaidTotal());
         exportButton.addActionListener(e -> exportStudentReport());
         buttonPanel.add(loanHistoryButton);
         buttonPanel.add(fineHistoryButton);
         buttonPanel.add(exportButton);
+        buttonPanel.add(monthlyPaidTotalButton);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(filterPanel, BorderLayout.CENTER);
@@ -203,11 +207,20 @@ public class ReportsPanel extends JPanel {
             return;
         }
         try {
-            List<Fine> fines = controller.getFineHistory(student.getStudentId());
+            Integer month = monthComboBox.getSelectedIndex();
+            if (month != null && month == 0) {
+                month = null;
+            }
+            Integer year = (Integer) yearComboBox.getSelectedItem();
+            if (year != null && year == 0) {
+                year = null;
+            }
+            List<Fine> fines = controller.getFineHistory(student.getStudentId(), month, year);
             StringBuilder report = new StringBuilder();
             report.append(String.format("Fine History for %s (ID %d)\n", student.getName(), student.getStudentId()));
-            report.append(String.format("Period: %s %s\n\n", monthComboBox.getSelectedItem(),
-                yearComboBox.getSelectedItem() == null || (Integer) yearComboBox.getSelectedItem() == 0 ? "All Years" : yearComboBox.getSelectedItem()));
+            String monthLabel = (month == null ? "All Months" : (String) monthComboBox.getSelectedItem());
+            String yearLabel = (year == null ? "All Years" : String.valueOf(year));
+            report.append(String.format("Period: %s %s\n\n", monthLabel, yearLabel));
             if (fines.isEmpty()) {
                 report.append("No fines recorded for this student.\n");
             } else {
@@ -229,11 +242,58 @@ public class ReportsPanel extends JPanel {
                         status,
                         fine.getFineAmount()));
                 }
-                report.append("\nTotal paid: $" + totalPaid + ", Outstanding: $" + totalUnpaid + "\n");
+                report.append("\nTotal paid (period): $" + totalPaid + ", Outstanding (period): $" + totalUnpaid + "\n");
             }
             studentReportArea.setText(report.toString());
         } catch (Exception e) {
             showError("Error generating fine history", e);
+        }
+    }
+
+    private void generateMonthlyPaidTotal() {
+        Student student = (Student) studentComboBox.getSelectedItem();
+        if (student == null) {
+            JOptionPane.showMessageDialog(this, "Select a student first.", "Selection Required", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        Integer month = monthComboBox.getSelectedIndex();
+        if (month != null && month == 0) {
+            month = null; // All months
+        }
+        Integer year = (Integer) yearComboBox.getSelectedItem();
+        if (year != null && year == 0) {
+            year = null; // All years
+        }
+        try {
+            List<Fine> paid = controller.getPaidFinesByStudentInMonth(student.getStudentId(), month, year);
+            BigDecimal total = BigDecimal.ZERO;
+            for (Fine f : paid) {
+                if (f.getFineAmount() != null) {
+                    total = total.add(f.getFineAmount());
+                }
+            }
+            DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+            StringBuilder report = new StringBuilder();
+            report.append(String.format("Monthly Paid Fines Total for %s (ID %d)\n", student.getName(), student.getStudentId()));
+            String monthLabel = (month == null ? "All Months" : (String) monthComboBox.getSelectedItem());
+            String yearLabel = (year == null ? "All Years" : String.valueOf(year));
+            report.append(String.format("Period: %s %s\n\n", monthLabel, yearLabel));
+            report.append(String.format("Total paid: $%.2f\n\n", total));
+            if (!paid.isEmpty()) {
+                report.append(String.format("%-12s %-30s %-10s%n", "Payment Date", "Book", "Amount"));
+                report.append(repeat('-', 60)).append('\n');
+                for (Fine f : paid) {
+                    report.append(String.format("%-12s %-30s $%-10.2f%n",
+                        f.getPaymentDate() != null ? fmt.format(f.getPaymentDate()) : "",
+                        truncate(f.getBookTitle(), 30),
+                        f.getFineAmount()));
+                }
+            } else {
+                report.append("No paid fines found for the selected period.\n");
+            }
+            studentReportArea.setText(report.toString());
+        } catch (Exception e) {
+            showError("Error generating monthly paid total", e);
         }
     }
 

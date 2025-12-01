@@ -185,4 +185,22 @@ class OracleLibraryRepository implements LibraryRepository {
     public boolean payFine(int fineId) throws Exception {
         return fineDAO.payFine(fineId);
     }
+
+    @Override
+    public List<Fine> getFineHistoryByStudentMonthYear(int studentId, Integer month, Integer year) throws Exception {
+        if (month != null && month != 0 && year != null && year != 0) {
+            return fineDAO.getFineHistory(studentId, month, year);
+        }
+        // For other combinations, fall back to unfiltered + controller filtering
+        return fineDAO.getAllFineHistory(studentId);
+    }
+
+    @Override
+    public List<Fine> getPaidFinesByStudentInMonth(int studentId, Integer month, Integer year) throws Exception {
+        if (month != null && month != 0 && year != null && year != 0) {
+            return fineDAO.getPaidFinesByStudentInMonth(studentId, month, year);
+        }
+        // Fallback: get all and filter in controller
+        return fineDAO.getAllFineHistory(studentId);
+    }
 }

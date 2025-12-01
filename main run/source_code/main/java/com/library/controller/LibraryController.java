@@ -340,8 +340,37 @@ public class LibraryController {
         return repository.getAllFineHistory(studentId);
     }
 
+    /**
+     * Fine history filtered by fine_date month/year. If month/year are null or zero,
+     * returns all fines (delegates to repository and filters in controller).
+     */
+    public List<Fine> getFineHistory(int studentId, Integer month, Integer year) throws Exception {
+        return repository.getFineHistoryByStudentMonthYear(studentId, month, year);
+    }
+
     public List<Fine> getAllFines() throws Exception {
         return repository.getAllFines();
+    }
+
+    /**
+     * Get fines that were paid by a student in a specific month/year (by payment_date).
+     * If month/year are null or zero, returns all paid fines.
+     */
+    public List<Fine> getPaidFinesByStudentInMonth(int studentId, Integer month, Integer year) throws Exception {
+        return repository.getPaidFinesByStudentInMonth(studentId, month, year);
+    }
+
+    /**
+     * Sum of fines paid by a student in a specific month/year (by payment_date).
+     */
+    public java.math.BigDecimal getMonthlyFinesPaidTotal(int studentId, Integer month, Integer year) throws Exception {
+        java.math.BigDecimal total = java.math.BigDecimal.ZERO;
+        for (Fine f : getPaidFinesByStudentInMonth(studentId, month, year)) {
+            if (f.getFineAmount() != null) {
+                total = total.add(f.getFineAmount());
+            }
+        }
+        return total;
     }
 
     public Fine payFine(int fineId) throws Exception {
@@ -445,6 +474,3 @@ public class LibraryController {
         }
     }
 }
-
-
-
