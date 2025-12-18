@@ -111,13 +111,38 @@ public class StudentDAO {
     }
     
     public void deleteStudent(int studentId) throws SQLException {
-        String sql = "DELETE FROM Students WHERE student_id = ?";
-        
-        try (Connection conn = connectionManager.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, studentId);
-            stmt.executeUpdate();
+        try (Connection conn = connectionManager.getConnection()) {
+            conn.setAutoCommit(false);
+            try (
+                PreparedStatement deleteFines = conn.prepareStatement(
+                    "DELETE FROM Fines WHERE student_id = ?"
+                );
+                PreparedStatement deleteLoans = conn.prepareStatement(
+                    "DELETE FROM Loans WHERE student_id = ?"
+                );
+                PreparedStatement deleteStudent = conn.prepareStatement(
+                    "DELETE FROM Students WHERE student_id = ?"
+                )
+            ) {
+                deleteFines.setInt(1, studentId);
+                deleteFines.executeUpdate();
+
+                deleteLoans.setInt(1, studentId);
+                deleteLoans.executeUpdate();
+
+                deleteStudent.setInt(1, studentId);
+                int affected = deleteStudent.executeUpdate();
+                if (affected == 0) {
+                    throw new SQLException("Student not found: " + studentId);
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         }
     }
 }
