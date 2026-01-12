@@ -1,1 +1,3 @@
+com\library\test\LibraryControllerFullTest.class
 com\library\integration\MongoRepositoryIntegrationTest.class
+com\library\test\FakeLibraryRepository.class
